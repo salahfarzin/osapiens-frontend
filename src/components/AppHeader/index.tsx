@@ -1,4 +1,4 @@
-import { Grow, Box, Theme, Toolbar, Typography } from "@mui/material";
+import { Grow, Box, Theme, Toolbar, Typography, Select, MenuItem } from "@mui/material";
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar";
 import { styled, useTheme } from "@mui/material/styles";
 import React from "react";
@@ -12,7 +12,7 @@ interface AppBarProps extends MuiAppBarProps {
 }
 
 interface AppHeaderProps {
-  user: User;
+  user: User | null;
   pageTitle: string;
 }
 
@@ -32,7 +32,7 @@ const AppBar = styled(MuiAppBar)<AppBarProps>(({ theme }) => ({
 
 const AppHeader = React.forwardRef((props: AppHeaderProps, ref) => {
   const { user, pageTitle } = props;
-  const { t } = useTranslation("app");
+  const { t, i18n } = useTranslation("app");
   const theme = useTheme();
   const { minutes, seconds } = useCountdown(1);
 
@@ -67,10 +67,35 @@ const AppHeader = React.forwardRef((props: AppHeaderProps, ref) => {
               {pageTitle.toLocaleUpperCase()}
             </Typography>
           </Box>
+          <Box
+            sx={{
+              flex: 1,
+              justifyContent: "flex-end",
+              display: "flex",
+              alignItems: "center",
+              gap: 1,
+            }}
+          >
+            <Select
+              value={i18n.language}
+              onChange={(e) => i18n.changeLanguage(e.target.value)}
+              size="small"
+              sx={{
+                color: theme.palette.common.white,
+                "& .MuiOutlinedInput-notchedOutline": {
+                  borderColor: theme.palette.primary.main,
+                },
+                "& .MuiSvgIcon-root": { color: theme.palette.common.white },
+              }}
+            >
+              <MenuItem value="en">EN</MenuItem>
+              <MenuItem value="de">DE</MenuItem>
+            </Select>
+          </Box>
           <Box sx={{ flex: 1, justifyContent: "flex-end", display: "flex" }}>
-            {user && user.eMail && (
-              <Grow in={Boolean(user && user.eMail)}>
-                <AvatarMenu user={user} />
+            {user?.eMail && (
+              <Grow in={Boolean(user?.eMail)}>
+                <div>{user && <AvatarMenu user={user} />}</div>
               </Grow>
             )}
           </Box>
