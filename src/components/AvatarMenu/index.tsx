@@ -6,7 +6,7 @@ import {
   Button,
   Divider,
   Tooltip,
-  Typography
+  Typography,
 } from "@mui/material";
 import { indigo } from "@mui/material/colors";
 import Menu from "@mui/material/Menu";
@@ -21,8 +21,8 @@ interface AvatarMenuProps {
 
 const getInitials = (user: User) => {
   if (user.firstName || user.lastName) {
-    const initials = [user.firstName, user.lastName]
-      .map((_) => (_[0] ? _[0].toLocaleUpperCase() : _))
+    const initials = [user.firstName ?? "", user.lastName ?? ""]
+      .map((_) => (_[0] ? _[0].toLocaleUpperCase() : ""))
       .join("");
     return initials;
   }
@@ -32,14 +32,19 @@ const getInitials = (user: User) => {
 const stringAvatar = (user: User) => {
   const initials = getInitials(user);
   // 36 * 7 <= 255
-  const r = Math.floor(parseInt(initials[0] ? initials[0] : "k", 36) * 7);
-  const g = Math.floor(parseInt(initials[1] ? initials[1] : "l", 36) * 7);
-  const b = Math.floor(
-    parseInt(user?.firstName[1] ? user?.firstName[1] : "m", 36) * 7
+  const r = Math.floor(
+    Number.parseInt(initials[0] ? initials[0] : "k", 36) * 7
   );
+  const g = Math.floor(
+    Number.parseInt(initials[1] ? initials[1] : "l", 36) * 7
+  );
+  const b = Math.floor(
+    Number.parseInt(user?.firstName?.[1] ? user.firstName[1] : "m", 36) * 7
+  );
+
   return {
     sx: { bgcolor: `rgb(${r},${g},${b})`, cursor: "pointer" },
-    children: initials
+    children: initials,
   };
 };
 
@@ -55,7 +60,6 @@ const AvatarMenu = (props: AvatarMenuProps) => {
   const handleClose = () => {
     setAnchorEl(null);
   };
-  // const history = useHistory();
 
   return (
     <div>
@@ -68,11 +72,11 @@ const AvatarMenu = (props: AvatarMenuProps) => {
         onClose={handleClose}
         anchorOrigin={{
           vertical: "bottom",
-          horizontal: "left"
+          horizontal: "left",
         }}
         transformOrigin={{
           vertical: "bottom",
-          horizontal: "left"
+          horizontal: "left",
         }}
       >
         <Box display="flex" flexDirection="column" alignItems="center" p={1}>
@@ -126,7 +130,7 @@ const AvatarMenu = (props: AvatarMenuProps) => {
             size="small"
             style={{
               color: indigo[500],
-              textTransform: "none"
+              textTransform: "none",
             }}
           >
             Data Privacy Statement
@@ -136,7 +140,7 @@ const AvatarMenu = (props: AvatarMenuProps) => {
             size="small"
             style={{
               color: indigo[500],
-              textTransform: "none"
+              textTransform: "none",
             }}
           >
             Imprint

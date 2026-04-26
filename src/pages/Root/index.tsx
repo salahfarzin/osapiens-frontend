@@ -7,7 +7,6 @@ import { observer } from "mobx-react";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { TRoute } from "../../types/global";
-import { resultOrError } from "../../utils/global";
 import AccessDenied from "../AccessDenied";
 import { routes as useRoutes } from "../routes";
 
@@ -25,9 +24,8 @@ const hideSplashScreen = () => {
 const Root = () => {
   const { t } = useTranslation("app");
   const userStore = useUserStore();
-  const { user } = userStore || {};
+  const { user, loading } = userStore;
   const theme = useTheme();
-  console.log(user);
   const routes = [...useRoutes] as readonly TRoute[];
   const [fallbackRoute] = routes;
   const Fallback = fallbackRoute.Component;
@@ -44,7 +42,7 @@ const Root = () => {
     pageTitle = t(`routes./${groupName}`);
   }
 
-  const loadingApp = false;
+  const loadingApp = loading;
   const accessDenied = false;
 
   useEffect(() => {
@@ -69,7 +67,7 @@ const Root = () => {
         top: 0,
         left: 0,
         width: "100vw",
-        height: "100vh"
+        height: "100vh",
       }}
     >
       {loadingApp && (
@@ -88,7 +86,7 @@ const Root = () => {
           display: "flex",
           height: "100%",
           width: "100%",
-          background: "#f5f5f5"
+          background: "#f5f5f5",
         }}
       >
         <Slide direction="down" in={!loadingApp} mountOnEnter>
@@ -101,7 +99,7 @@ const Root = () => {
             height: `calc(100% - ${theme.tokens.header.height})`,
             width: "100%",
             marginTop:
-              theme.tokens.header.height /* Necessary because of AppBar */
+              theme.tokens.header.height /* Necessary because of AppBar */,
           }}
         >
           {MatchedElement}
