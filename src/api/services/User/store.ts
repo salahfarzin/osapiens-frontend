@@ -2,7 +2,7 @@ import { makeAutoObservable, runInAction } from "mobx";
 import {
   ActionError,
   ActionResultStatus,
-  ActionSuccess
+  ActionSuccess,
 } from "../../../types/global";
 import { resultOrError, ResultOrErrorResponse } from "../../../utils/global";
 
@@ -14,6 +14,7 @@ export interface User {
 
 export default class UserStore {
   user: User | null = null;
+  loading: boolean = false;
 
   // init function
   constructor() {
@@ -22,6 +23,10 @@ export default class UserStore {
 
   // actions
   async getOwnUser() {
+    runInAction(() => {
+      this.loading = true;
+    });
+
     const [result, error] = (await resultOrError(
       new Promise((resolve) =>
         setTimeout(
@@ -29,34 +34,38 @@ export default class UserStore {
             resolve({
               firstName: "Aria",
               lastName: "Test",
-              eMail: "linda.bolt@osapiens.com"
+              eMail: "linda.bolt@osapiens.com",
             }),
           500
         )
       )
     )) as ResultOrErrorResponse<User>;
 
-    if (!!error) {
+    runInAction(() => {
+      this.loading = false;
+    });
+
+    if (error) {
       return {
         status: ActionResultStatus.ERROR,
-        error
+        error,
       } as ActionError;
     }
 
     if (result) {
       runInAction(() => {
-        this.urser = result;
+        this.user = result;
       });
 
       return {
         status: ActionResultStatus.SUCCESS,
-        result: result
+        result: result,
       } as ActionSuccess<User>;
     }
 
     return {
       status: ActionResultStatus.ERROR,
-      error: "Something went wrong."
+      error: "Something went wrong.",
     } as ActionError;
   }
 }
